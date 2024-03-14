@@ -1,4 +1,3 @@
-import { z } from 'zod';
 import { zli } from './zli';
 
 const app = zli().command('echo', (cmd) =>

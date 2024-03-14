@@ -97,6 +97,9 @@ type OptionObject = {
 export type ParsedArguments = {
   [key: string]: PrimitiveType | Array<PrimitiveType> | OptionObject;
 } & {
+  /**
+   * Represents the remaining arguments that do not have keys or definitions
+   */
   _: Array<string>;
 };
 
@@ -104,6 +107,15 @@ export type ParsedArguments = {
  * Represents an expected arguments shape for a command
  */
 export type ArgumentsShape = {
+  /**
+   * An argument definition with a given key
+   *
+   * @example
+   * const myArguments = {
+   *  a: z.number(),
+   *  b: z.number(),
+   * }
+   */
   [name: string]: PermittedZodTypes;
 };
 
@@ -111,6 +123,14 @@ export type ArgumentsShape = {
  * Represents an options shape for a command
  */
 export type OptionsShape = {
+  /**
+   * An option definition with a given key
+   *
+   * @example
+   * const myOptions = {
+   *  foo: z.string().default('bar')
+   * }
+   */
   [name: string]: PermittedZodTypes;
 };
 
@@ -142,6 +162,10 @@ export type OptionsHelp<T extends OptionsShape> = {
   [key in keyof T]: string;
 };
 
+/**
+ * Represents a type that defines shorthand definitions for options.
+ * @template T - The shape of the options.
+ */
 export type ShorthandDefinitions<T extends OptionsShape> = {
   [key in keyof T]?: `-${string}`;
 };
@@ -420,7 +444,7 @@ class _Zli<TGlobalOptions extends OptionsShape> implements Zli<TGlobalOptions> {
     opts: TOptions
   ): _Zli<TGlobalOptions & TOptions> {
     this._globalOptions = { ...(this._globalOptions ?? {}), ...opts } as any;
-    return this as _Zli<TGlobalOptions & TOptions>;
+    return this as any;
   }
 
   help(): _Zli<WithHelp<TGlobalOptions>> {
@@ -706,7 +730,7 @@ class _Command<
     opts: TOptions
   ): Command<TGlobalOptions, TArgs, TOptions> {
     this._optsSchema = opts as any;
-    return this as _Command<TGlobalOptions, TArgs, TOptions>;
+    return this as any;
   }
 
   shorthands(
@@ -907,7 +931,7 @@ export function expandShorthandOptions<TOptions extends OptionsShape>(
   shorthands?: Partial<ShorthandDefinitions<TOptions>>
 ): Options<TOptions> {
   if (typeof shorthands === 'undefined') {
-    return args as Options<TOptions>;
+    return args as any;
   }
   for (const [longhand, shorthand] of Object.entries(shorthands)) {
     const key = shorthand!.substring(1);
@@ -917,7 +941,7 @@ export function expandShorthandOptions<TOptions extends OptionsShape>(
     }
   }
 
-  return args as Options<TOptions>;
+  return args as any;
 }
 
 function parseArguments<TArgs extends ArgumentsShape>(
@@ -925,7 +949,7 @@ function parseArguments<TArgs extends ArgumentsShape>(
   schema?: TArgs
 ): Arguments<TArgs> {
   if (typeof schema === 'undefined') {
-    return args as Arguments<TArgs>;
+    return args as any;
   }
   const parsedArgs = Object.create(null);
   const schemaDefinitions = Object.entries(schema);
