@@ -46,6 +46,22 @@ describe('zli commands', () => {
     expect(stdout.read()).toMatch(/hello world/i);
   });
 
+  test('should print an error message when no arguments are passed to "echo"', async () => {
+    const stdout = createWriteStream();
+    await zli({ stdout })
+      .command('echo', (cmd) =>
+        cmd.invoke(({ _ }, stdout) => {
+          if (_.length === 0) {
+            stdout.write('Error: No message provided');
+          } else {
+            stdout.write(_.join(' '));
+          }
+        })
+      )
+      .exec(['echo']);
+    expect(stdout.read()).toMatch(/error: no message provided/i);
+  });
+
   // generated with Copilot "generate a test case for an undefined command"
   test('should print an error message for a non-existent command', async () => {
     const stdout = createWriteStream();
