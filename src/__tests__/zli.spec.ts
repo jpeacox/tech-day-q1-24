@@ -46,5 +46,10 @@ describe('zli commands', () => {
     expect(stdout.read()).toMatch(/hello world/i);
   });
 
-  // put new command tests here
+  // generated with Copilot "generate a test case for an undefined command"
+  test('should print an error message for a non-existent command', async () => {
+    const stdout = createWriteStream();
+    await zli({ stdout }).exec(['nonexistent']);
+    expect(stdout.read()).toMatch(/command not found/i);
+  });
 });
