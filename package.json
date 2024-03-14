@@ -3,7 +3,7 @@
   "module": "src/index.ts",
   "type": "module",
   "bin": {
-    "zli": "src/index.ts"
+    "tech-day": "src/index.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.0.8"
