@@ -5,6 +5,9 @@
   "bin": {
     "tech-day": "src/index.ts"
   },
+  "scripts": {
+    "postinstall": "bun link"
+  },
   "devDependencies": {
     "@types/bun": "^1.0.8"
   },
