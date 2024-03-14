@@ -21,17 +21,6 @@ function createWriteStream(): TestWriteStream {
 }
 
 describe('zli', () => {
-  test('should print "Hello world" to stdout', async () => {
-    const stdout = createWriteStream();
-    await zli({ stdout })
-      .command('echo', (cmd) =>
-        cmd.invoke((_, stdout) => stdout.write('Hello world'))
-      )
-      .exec(['echo']);
-
-    expect(stdout.read()).toMatch(/hello world/i);
-  });
-
   test('should print the description of a command when --help is passed', async () => {
     const stdout = createWriteStream();
     await zli({ stdout })
@@ -43,4 +32,19 @@ describe('zli', () => {
 
     expect(stdout.read()).toMatch(/prints a message/i);
   });
+});
+
+describe('zli commands', () => {
+  test('should print "Hello world" to stdout', async () => {
+    const stdout = createWriteStream();
+    await zli({ stdout })
+      .command('echo', (cmd) =>
+        cmd.invoke((_, stdout) => stdout.write('Hello world'))
+      )
+      .exec(['echo']);
+
+    expect(stdout.read()).toMatch(/hello world/i);
+  });
+
+  // put new command tests here
 });
