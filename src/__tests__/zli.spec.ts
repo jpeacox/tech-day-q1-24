@@ -1,5 +1,6 @@
+import { z } from 'zod';
 import { zli, type ZliWriteStream } from '../zli';
-import { test, describe, expect } from 'bun:test';
+import { test, describe, expect, mock } from 'bun:test';
 
 interface TestWriteStream extends ZliWriteStream {
   read(): string;
@@ -67,5 +68,25 @@ describe('zli commands', () => {
     const stdout = createWriteStream();
     await zli({ stdout }).exec(['nonexistent']);
     expect(stdout.read()).toMatch(/command not found/i);
+  });
+
+  test('calls a mock fn with the given arguments from the command line', async () => {
+    const stdout = createWriteStream();
+    const mockFn = mock((_: string) => {});
+    await zli({ stdout })
+      .command('greet', (cmd) =>
+        cmd
+          .arguments({
+            name: z.string(),
+          })
+          .invoke(({ name }, stdout) => {
+            mockFn(name);
+            stdout.write(`Hello, ${name}!`);
+          })
+      )
+      .exec(['greet', 'John Doe']);
+
+    expect(mockFn).toHaveBeenCalledWith('John Doe');
+    expect(stdout.read()).toMatch(/hello, john doe/i);
   });
 });
